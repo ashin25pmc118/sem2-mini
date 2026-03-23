@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Sales Report — Bakery Mate{% endblock %}
+{% block nav_report_sales %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>🧾 Sales Report</h2>
+        <p>Detailed view of all generated revenue.</p>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <div class="stat-card">
+        <div class="stat-label">Total Sales Volume</div>
+        <div class="stat-value" style="color:var(--success);">₹{{ total_sales_amount|floatformat:2 }}</div>
+        <div class="stat-sub">Overall revenue generated from {{ sales|length }} transactions</div>
+    </div>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Date & Time</th>
+                <th>Customer</th>
+                <th>Cashier</th>
+                <th>Total Value (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td><strong>#{{ sale.id }}</strong></td>
+                <td>{{ sale.date|date:"d M Y, h:i A" }}</td>
+                <td>{{ sale.customer.name|default:"Walk-in" }}</td>
+                <td><span class="badge badge-info">{{ sale.cashier.username }}</span></td>
+                <td><strong>₹{{ sale.total_amount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;color:#bbb;padding:30px;">No sales recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

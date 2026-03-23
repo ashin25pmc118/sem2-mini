@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Expenses Report — Bakery Mate{% endblock %}
+{% block nav_report_expenses %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>💸 Expenses Report</h2>
+        <p>Detailed breakdown of all general business expenses.</p>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <div class="stat-card">
+        <div class="stat-label">Total Cash Spent</div>
+        <div class="stat-value" style="color:var(--danger);">₹{{ total_expenses|floatformat:2 }}</div>
+        <div class="stat-sub">Overall tracked cost for general operations</div>
+    </div>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Recorded By</th>
+                <th>Total Value (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date|date:"d M Y" }}</td>
+                <td><span class="badge badge-info">{{ expense.get_category_display }}</span></td>
+                <td>{{ expense.description|default:"—" }}</td>
+                <td>{{ expense.recorded_by.username|default:"System" }}</td>
+                <td><strong>₹{{ expense.amount|floatformat:2 }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;color:#bbb;padding:30px;">No expenses recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

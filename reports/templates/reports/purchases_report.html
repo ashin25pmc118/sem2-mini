@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Purchases Report — Bakery Mate{% endblock %}
+{% block nav_report_purchases %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>📦 Purchases Report</h2>
+        <p>Detailed view of all purchased raw materials and products.</p>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="stat-card">
+        <div class="stat-label">Total Purchases Volume</div>
+        <div class="stat-value" style="color:var(--warning);">₹{{ total_purchases|floatformat:2 }}</div>
+        <div class="stat-sub">Overall cost generated from all bulk purchases</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Raw Material Purchases</div>
+        <div class="stat-value" style="color:var(--warning);">₹{{ total_rm_cost|floatformat:2 }}</div>
+        <div class="stat-sub">From generic ingredient restocks</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Product Purchases</div>
+        <div class="stat-value" style="color:var(--warning);">₹{{ total_pp_cost|floatformat:2 }}</div>
+        <div class="stat-sub">From finished product restocks</div>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <!-- Raw Materials -->
+    <div class="card">
+        <h3>Raw Material Restocks</h3>
+        <table class="data-table" style="margin-top:10px;">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>Total Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in raw_materials %}
+                <tr>
+                    <td><strong>#{{ purchase.id }}</strong></td>
+                    <td>{{ purchase.date|date:"d M Y" }}</td>
+                    <td>{{ purchase.inventory_item.name }}</td>
+                    <td><strong>₹{{ purchase.total_cost|add:purchase.transportation_charge|floatformat:2 }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center;color:#bbb;padding:30px;">No raw material restocks yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Product Purchases -->
+    <div class="card">
+        <h3>Finished Product Restocks</h3>
+        <table class="data-table" style="margin-top:10px;">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>Total Cost (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in product_purchases %}
+                <tr>
+                    <td><strong>#{{ purchase.id }}</strong></td>
+                    <td>{{ purchase.date|date:"d M Y" }}</td>
+                    <td>{{ purchase.product.name }}</td>
+                    <td><strong>₹{{ purchase.total_cost|floatformat:2 }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center;color:#bbb;padding:30px;">No finished product restocks yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

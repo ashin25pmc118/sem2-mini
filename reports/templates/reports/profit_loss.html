@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Profit & Loss Report — Bakery Mate{% endblock %}
+{% block nav_report_pl %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>📉 Profit & Loss Report</h2>
+        <p>Overall financial summary for your bakery.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" style="color:var(--success);">₹{{ total_revenue|floatformat:2 }}</div>
+        <div class="stat-sub">From all sales</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-label">Total Purchases</div>
+        <div class="stat-value" style="color:var(--warning);">₹{{ total_purchases|floatformat:2 }}</div>
+        <div class="stat-sub">Raw Materials (₹{{ rm_cost }}) + Products (₹{{ product_purchases }})</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">💸</div>
+        <div class="stat-label">Total Expenses</div>
+        <div class="stat-value" style="color:var(--danger);">₹{{ general_expenses|floatformat:2 }}</div>
+        <div class="stat-sub">Rent, Salaries, Utilities, etc.</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-label">Net Profit (True Net)</div>
+        <div class="stat-value" style="color: {% if net_profit >= 0 %}var(--success){% else %}var(--danger){% endif %};">
+            ₹{{ net_profit|floatformat:2 }}
+        </div>
+        <div class="stat-sub">Revenue - (Purchases + Expenses)</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <h3>ℹ️ Note regarding Profit & Loss</h3>
+    <p style="font-size: 0.9rem; color: #555; margin-top: 10px;">
+        This shows the all-time aggregated totals. If you want to refine this to a specific time range in the future,
+        date filters can be added!
+    </p>
+</div>
+{% endblock %}

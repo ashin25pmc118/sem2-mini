@@ -604,6 +604,20 @@
             <span class="side-icon">🛒</span> Product Purchase
         </a>
 
+        <div class="sidebar-section">Reports</div>
+        <a class="side-link {% block nav_report_pl %}{% endblock %}" href="{% url 'profit_loss_report' %}">
+            <span class="side-icon">📉</span> Profit & Loss
+        </a>
+        <a class="side-link {% block nav_report_sales %}{% endblock %}" href="{% url 'sales_report' %}">
+            <span class="side-icon">🧾</span> Sales
+        </a>
+        <a class="side-link {% block nav_report_purchases %}{% endblock %}" href="{% url 'purchases_report' %}">
+            <span class="side-icon">📦</span> Purchases
+        </a>
+        <a class="side-link {% block nav_report_expenses %}{% endblock %}" href="{% url 'expenses_report' %}">
+            <span class="side-icon">💸</span> Expenses
+        </a>
+
         {% if user.is_owner %}
         <div class="sidebar-section">Management</div>
         <a class="side-link {% block nav_staff %}{% endblock %}" href="{% url 'staff_list' %}">
