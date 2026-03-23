@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from accounts.models import Bakery, User
 from store.models import Product, InventoryItem
 
@@ -128,3 +129,24 @@ class Purchase(models.Model):
 
     def __str__(self):
         return f"Bought {self.quantity_added} {self.inventory_item.unit} of {self.inventory_item.name} for ${self.total_cost}"
+
+class Expense(models.Model):
+    EXPENSE_CATEGORIES = [
+        ('Electricity', 'Electricity & Utilities'),
+        ('Salary', 'Staff Salaries'),
+        ('Rent', 'Shop Rent'),
+        ('Transportation', 'Transportation & Logistics'),
+        ('Maintenance', 'Equipment Maintenance'),
+        ('Packaging', 'Packaging Materials'),
+        ('Other', 'Other Expenses'),
+    ]
+
+    bakery = models.ForeignKey(Bakery, on_delete=models.CASCADE, related_name='expenses')
+    date = models.DateField(default=timezone.now)
+    category = models.CharField(max_length=50, choices=EXPENSE_CATEGORIES)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True, null=True, help_text="E.g., Electricity bill for March")
+    recorded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='recorded_expenses')
+
+    def __str__(self):
+        return f"{self.category} - ₹{self.amount} on {self.date}"

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Delete Expense — Bakery Mate{% endblock %}
+{% block nav_expenses %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Delete Expense</h2>
+    </div>
+</div>
+
+<div class="card" style="max-width:500px;">
+    <h3 style="margin-top:0; color:var(--danger);">⚠️ Confirm Deletion</h3>
+    <p style="font-size: 1.05rem; line-height: 1.5; color: #444; margin-bottom: 20px;">
+        Are you sure you want to delete this <strong>{{ expense.get_category_display }}</strong> expense of ₹{{ expense.amount }} from {{ expense.date }}?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display:flex;gap:12px;">
+            <button class="btn btn-primary" style="background:var(--danger); border-color:var(--danger);" type="submit">Yes, Delete</button>
+            <a class="btn btn-secondary" href="{% url 'expense_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

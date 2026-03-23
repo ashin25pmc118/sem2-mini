@@ -1,5 +1,5 @@
 from django import forms
-from .models import Sale, SaleItem, Purchase, Supplier, Customer
+from .models import Sale, SaleItem, Purchase, Supplier, Customer, Expense
 from store.models import Product, InventoryItem
 
 
@@ -43,3 +43,14 @@ class PurchaseForm(forms.ModelForm):
             self.fields['inventory_item'].queryset = InventoryItem.objects.filter(bakery=bakery)
             self.fields['supplier'].queryset = Supplier.objects.filter(bakery=bakery)
             self.fields['supplier'].required = False
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['date', 'category', 'amount', 'description']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Expenses — Bakery Mate{% endblock %}
+{% block nav_expenses %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>💸 Expenses</h2>
+        <p>Track your shop's outgoing expenses like rent, electricity, and salaries.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'expense_create' %}">+ Add Expense</a>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Amount (₹)</th>
+                <th>Recorded By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td style="white-space:nowrap;">{{ expense.date|date:"d M Y" }}</td>
+                <td><span class="badge badge-info">{{ expense.get_category_display }}</span></td>
+                <td>{{ expense.description|default:"—"|truncatewords:8 }}</td>
+                <td><strong>₹{{ expense.amount|floatformat:"2" }}</strong></td>
+                <td>{{ expense.recorded_by.username|default:"System" }}</td>
+                <td>
+                    <div style="display:flex; gap:8px;">
+                        {% if user.is_owner %}
+                        <a href="{% url 'expense_edit' expense.pk %}" class="btn-edit">Edit</a>
+                        <a href="{% url 'expense_delete' expense.pk %}" class="btn-delete">Del</a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center;color:#bbb;padding:30px;">No expenses recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

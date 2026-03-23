@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from .models import Sale, SaleItem, Purchase, Supplier, Customer
-from .forms import SaleForm, SaleItemForm, PurchaseForm, SupplierForm, CustomerForm
+from .models import Sale, SaleItem, Purchase, Supplier, Customer, Expense
+from .forms import SaleForm, SaleItemForm, PurchaseForm, SupplierForm, CustomerForm, ExpenseForm
 from store.models import Product, ProductCategory
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -412,3 +412,50 @@ def customer_delete_view(request, pk):
         customer.delete()
         return redirect('customer_list')
     return render(request, 'sales/customer_confirm_delete.html', {'customer': customer})
+
+# ==================== EXPENSES ====================
+
+@login_required
+def expense_list_view(request):
+    expenses = Expense.objects.filter(bakery=request.user.bakery).order_by('-date')
+    return render(request, 'sales/expense_list.html', {'expenses': expenses})
+
+@login_required
+def expense_create_view(request):
+    if not request.user.is_owner:
+        return redirect('dashboard')
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.bakery = request.user.bakery
+            expense.recorded_by = request.user
+            expense.save()
+            return redirect('expense_list')
+    else:
+        form = ExpenseForm()
+    return render(request, 'sales/expense_form.html', {'form': form, 'action': 'Add'})
+
+@login_required
+def expense_edit_view(request, pk):
+    if not request.user.is_owner:
+        return redirect('dashboard')
+    expense = get_object_or_404(Expense, pk=pk, bakery=request.user.bakery)
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+            return redirect('expense_list')
+    else:
+        form = ExpenseForm(instance=expense)
+    return render(request, 'sales/expense_form.html', {'form': form, 'action': 'Edit'})
+
+@login_required
+def expense_delete_view(request, pk):
+    if not request.user.is_owner:
+        return redirect('dashboard')
+    expense = get_object_or_404(Expense, pk=pk, bakery=request.user.bakery)
+    if request.method == 'POST':
+        expense.delete()
+        return redirect('expense_list')
+    return render(request, 'sales/expense_confirm_delete.html', {'expense': expense})

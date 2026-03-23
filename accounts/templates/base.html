@@ -582,7 +582,10 @@
             <span class="side-icon">🧾</span> Sales History
         </a>
         <a class="side-link {% block nav_purchase %}{% endblock %}" href="{% url 'purchase_list' %}">
-            <span class="side-icon">💰</span> Expenses
+            <span class="side-icon">💰</span> Purchases
+        </a>
+        <a class="side-link {% block nav_expenses %}{% endblock %}" href="{% url 'expense_list' %}">
+            <span class="side-icon">💸</span> Expenses
         </a>
 
         <div class="sidebar-section">People</div>
