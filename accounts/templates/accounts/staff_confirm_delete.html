@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Delete Staff — Bakery Mate{% endblock %}
+{% block nav_staff %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Delete Staff Member</h2>
+        <p>Are you sure you want to remove this employee?</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:500px; padding: 25px;">
+    <h3 style="margin-top:0; color:var(--danger);">⚠️ Confirm Deletion</h3>
+    <p style="font-size: 1.05rem; line-height: 1.5; color: #444;">
+        Are you sure you want to delete the staff account for <strong>{{ staff.username }}</strong>?
+        They will no longer be able to log in. This action cannot be undone.
+    </p>
+
+    <form method="post" style="margin-top: 25px;">
+        {% csrf_token %}
+        <div style="display:flex;gap:12px;">
+            <button class="btn btn-primary" style="background:var(--danger); border-color:var(--danger);" type="submit">Yes, Delete {{ staff.username }}</button>
+            <a class="btn btn-secondary" href="{% url 'staff_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

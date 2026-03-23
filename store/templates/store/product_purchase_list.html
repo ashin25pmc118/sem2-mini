@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Product Purchase History — Bakery Mate{% endblock %}
+{% block nav_purchase %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>🛒 Product Purchases</h2>
+        <p>Finished goods bought from suppliers — automatically added to product stock.</p>
+    </div>
+    {% if user.is_owner or user.role == "Manager" or user.role == "Inventory Clerk" %}
+    <a class="btn btn-primary" href="{% url 'product_purchase_create' %}">+ Record Purchase</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Qty Added</th>
+                <th>Purchase Price</th>
+                <th>Total Cost</th>
+                <th>Supplier</th>
+                <th>Invoice #</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td>{{ p.date|date:"d M Y" }}</td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        {% if p.product.image %}
+                        <img class="thumb" src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                        {% else %}
+                        <div class="thumb-placeholder">🎂</div>
+                        {% endif %}
+                        <strong>{{ p.product.name }}</strong>
+                    </div>
+                </td>
+                <td><span class="badge badge-success">+{{ p.quantity|floatformat:"0" }} {{ p.product.get_unit_display
+                        }}</span></td>
+                <td>₹{{ p.purchase_price }}/{{ p.product.get_unit_display }}</td>
+                <td><strong style="color:var(--danger);">-₹{{ p.total_cost }}</strong></td>
+                <td>{{ p.supplier_name|default:"—" }}</td>
+                <td>{{ p.invoice_number|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center;color:#bbb;padding:30px;">No product purchases yet. <a
+                        href="{% url 'product_purchase_create' %}">Record one</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

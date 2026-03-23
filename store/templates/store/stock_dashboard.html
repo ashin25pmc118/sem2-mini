@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Stock Dashboard — Bakery Mate{% endblock %}
+{% block nav_stock %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>📦 Stock Dashboard</h2>
+        <p>Current stock levels for all active products.</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+        {% if user.is_owner %}<a class="btn btn-primary" href="{% url 'product_purchase_create' %}">+ Stock In (Purchase)</a>{% endif %}
+        <a class="btn btn-secondary" href="{% url 'stock_history' %}">📋 Movement History</a>
+    </div>
+</div>
+
+{% if low_stock %}
+<div class="alert alert-danger" style="margin-bottom:20px;">
+    ⚠️ <strong>{{ low_stock|length }} product(s)</strong> are running low on stock!
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+        {% for p in low_stock %}
+        <li><strong>{{ p.name }}</strong> — only {{ p.stock_quantity|floatformat:"0" }} {{ p.get_unit_display }} left
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Current Stock</th>
+                <th>Min Alert</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        {% if product.image %}
+                        <img class="thumb" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="thumb-placeholder">🎂</div>
+                        {% endif %}
+                        <strong>{{ product.name }}</strong>
+                    </div>
+                </td>
+                <td>{{ product.category.name|default:"—" }}</td>
+                <td>
+                    {% if product.is_low_stock %}
+                    <strong style="font-size:1rem;color:var(--danger);">{{ product.stock_quantity|floatformat:"0" }} {{
+                        product.get_unit_display }}</strong>
+                    {% else %}
+                    <strong style="font-size:1rem;color:var(--success);">{{ product.stock_quantity|floatformat:"0" }} {{
+                        product.get_unit_display }}</strong>
+                    {% endif %}
+                </td>
+                <td>{{ product.low_stock_alert }} {{ product.get_unit_display }}</td>
+                <td>
+                    {% if product.is_low_stock %}
+                    <span class="badge badge-danger">⚠️ Low Stock</span>
+                    {% else %}
+                    <span class="badge badge-success">✅ OK</span>
+                    {% endif %}
+                </td>
+                <td style="white-space:nowrap;">
+                    <a class="btn btn-secondary" href="{% url 'stock_history_product' product.pk %}"
+                        style="padding:5px 10px;font-size:0.78rem;">History</a>
+                    {% if user.is_owner %}<a class="btn btn-edit" href="{% url 'stock_adjust' product.pk %}">Adjust</a>{% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center;color:#bbb;padding:30px;">
+                    No products. <a href="{% url 'product_create' %}">Add a product first</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

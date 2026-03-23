@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Suppliers — Bakery Mate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Suppliers</h2>
+        <p>Manage the suppliers who provide products and raw materials.</p>
+    </div>
+    {% if user.is_owner or user.role == "Manager" %}
+    <a class="btn btn-primary" href="{% url 'supplier_create' %}">+ Add Supplier</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Supplier Name</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Address</th>
+                {% if user.is_owner or user.role == "Manager" %}<th>Actions</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for supplier in suppliers %}
+            <tr>
+                <td><strong>{{ supplier.name }}</strong></td>
+                <td>{{ supplier.contact_number|default:"—" }}</td>
+                <td>{{ supplier.email|default:"—" }}</td>
+                <td>{{ supplier.address|default:"—"|truncatewords:8 }}</td>
+                {% if user.is_owner or user.role == "Manager" %}
+                <td>
+                    <a class="btn btn-edit" href="{% url 'supplier_edit' supplier.pk %}">Edit</a>
+                    <a class="btn btn-delete" href="{% url 'supplier_delete' supplier.pk %}">Delete</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;color:#bbb;padding:30px;">No suppliers yet. <a
+                        href="{% url 'supplier_create' %}">Add one</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

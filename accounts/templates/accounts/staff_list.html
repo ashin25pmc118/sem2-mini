@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Staff — Bakery Mate{% endblock %}
+{% block nav_staff %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Staff Management</h2>
+        <p>Manage employee accounts and roles for your bakery.</p>
+    </div>
+    {% if user.is_owner %}
+    <a class="btn btn-primary" href="{% url 'create_staff' %}">+ Add Staff</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staff_list %}
+            <tr>
+                <td><strong>{{ staff.username }}</strong></td>
+                <td>{{ staff.email|default:"—" }}</td>
+                <td><span class="badge badge-warning">{{ staff.role }}</span></td>
+                <td>
+                    {% if staff.is_active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Include empty action row for layout or add buttons -->
+                    <div style="display:flex; gap:8px;">
+                        <a href="{% url 'edit_staff' staff.pk %}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;">Edit</a>
+                        <a href="{% url 'delete_staff' staff.pk %}" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem; background-color: var(--danger); color: white;">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align:center;color:#bbb;padding:30px;">No staff members yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

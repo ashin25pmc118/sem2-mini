@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add Category — Bakery Mate{% endblock %}
+{% block nav_products %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Add Product Category</h2>
+        <p>Create a new category to organize your products.</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:480px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="btn btn-primary" type="submit">✅ Create Category</button>
+            <a class="btn btn-secondary" href="javascript:history.back()">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

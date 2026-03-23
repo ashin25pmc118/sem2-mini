@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Adjust Stock — Bakery Mate{% endblock %}
+{% block nav_inventory %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>⚙️ Adjust Stock</h2>
+        <p>Manually add or remove stock for <strong>{{ product.name }}</strong>.</p>
+    </div>
+    <a class="btn btn-secondary" href="{% url 'stock_dashboard' %}">← Back to Stock</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:700px;">
+    <div class="card" style="text-align:center;">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}"
+            style="width:80px;height:80px;border-radius:10px;object-fit:cover;margin-bottom:12px;">
+        {% else %}
+        <div style="font-size:3rem;margin-bottom:8px;">🎂</div>
+        {% endif %}
+        <div style="font-size:0.78rem;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;">Current Stock</div>
+        {% if product.is_low_stock %}
+        <div style="font-size:2.2rem;font-weight:700;color:var(--danger);">
+            {{ product.stock_quantity|floatformat:"0" }}
+        </div>
+        {% else %}
+        <div style="font-size:2.2rem;font-weight:700;color:var(--success);">
+            {{ product.stock_quantity|floatformat:"0" }}
+        </div>
+        {% endif %}
+        <div style="font-size:0.85rem;color:#777;">{{ product.get_unit_display }}</div>
+        {% if product.is_low_stock %}
+        <div class="badge badge-danger" style="margin-top:10px;">⚠️ Low Stock!</div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;">Adjustment</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group" style="display:flex;gap:15px;">
+                <div style="flex:2;">
+                    <label class="form-label">Quantity Change</label>
+                    <input type="number" name="adjust_quantity" class="form-control"
+                        placeholder="e.g. +50 to add, -10 to remove" step="0.01" required>
+                    <p style="font-size:0.75rem;color:#999;margin-top:4px;">Use negative numbers to remove stock.</p>
+                </div>
+                <div style="flex:1;">
+                    <label class="form-label">Unit</label>
+                    <select name="adjust_unit" class="form-control">
+                        <option value="base">{{ product.get_unit_display }} (Base)</option>
+                        {% if product.enable_packet_selling %}
+                        <option value="pkt">{{ product.packet_label }} (x{{ product.packet_size }})</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Reason / Note</label>
+                <textarea name="note" class="form-control" rows="3"
+                    placeholder="e.g. Damaged goods, Fresh batch..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">✅ Apply Adjustment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

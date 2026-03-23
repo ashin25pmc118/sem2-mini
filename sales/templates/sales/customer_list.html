@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Customers — Bakery Mate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Customers</h2>
+        <p>Manage your bakery's customer profiles and purchase history.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'customer_create' %}">+ Add Customer</a>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Payment Preference</th>
+                <th>Total Orders</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td><strong>{{ customer.name }}</strong></td>
+                <td>{{ customer.phone|default:"—" }}</td>
+                <td>{{ customer.email|default:"—" }}</td>
+                <td><span class="badge badge-info">{{ customer.payment_preference }}</span></td>
+                <td>{{ customer.sales.count }}</td>
+                <td>
+                    <a class="btn btn-edit" href="{% url 'customer_edit' customer.pk %}">Edit</a>
+                    <a class="btn btn-delete" href="{% url 'customer_delete' customer.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center;color:#bbb;padding:30px;">No customers yet. <a
+                        href="{% url 'customer_create' %}">Add one</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

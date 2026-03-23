@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Inventory — Bakery Mate{% endblock %}
+{% block nav_inventory %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Inventory</h2>
+        <p>Raw materials and stock levels for your bakery.</p>
+    </div>
+    {% if user.is_owner or user.role in 'Manager,Inventory Clerk' %}
+    <div style="display:flex; gap:10px;">
+        <a class="btn btn-secondary" href="{% url 'export_inventory_csv' %}">⬇️ Export CSV</a>
+        <a class="btn btn-primary" href="{% url 'inventory_create' %}">+ Add Item</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Raw Material</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Low-Stock Level</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td><strong>{{ item.name }}</strong></td>
+                <td>{{ item.quantity|floatformat:"0" }}</td>
+                <td>{{ item.unit }}</td>
+                <td>{{ item.low_stock_alert_level }}</td>
+                <td>
+                    {% if item.is_low_stock %}
+                    <span class="badge badge-danger">⚠️ Low Stock</span>
+                    {% else %}
+                    <span class="badge badge-success">✅ OK</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;color:#bbb;padding:30px;">No inventory items. <a
+                        href="{% url 'inventory_create' %}">Add raw materials</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

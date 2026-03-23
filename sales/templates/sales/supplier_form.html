@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Supplier — Bakery Mate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ action }} Supplier</h2>
+        <p>{% if action == "Edit" %}Update supplier details.{% else %}Register a new supplier.{% endif %}</p>
+    </div>
+</div>
+<div class="card" style="max-width:520px;">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="btn btn-primary" type="submit">💾 Save Supplier</button>
+            <a class="btn btn-secondary" href="{% url 'supplier_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

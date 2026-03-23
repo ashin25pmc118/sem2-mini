@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Expenses — Bakery Mate{% endblock %}
+{% block nav_purchase %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Purchase & Expenses</h2>
+        <p>Track raw material purchases and restock history.</p>
+    </div>
+    {% if user.is_owner or user.role == "Manager" or user.role == "Inventory Clerk" %}
+    <a class="btn btn-primary" href="{% url 'purchase_create' %}">+ Record Purchase</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Raw Material</th>
+                <th>Quantity Added</th>
+                <th>Total Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.date|date:"d M Y" }}</td>
+                <td><strong>{{ purchase.inventory_item.name }}</strong></td>
+                <td>+{{ purchase.quantity_added }} {{ purchase.inventory_item.unit }}</td>
+                <td><span style="color:var(--danger);font-weight:600;">-₹{{ purchase.total_cost }}</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align:center;color:#bbb;padding:30px;">No purchases recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

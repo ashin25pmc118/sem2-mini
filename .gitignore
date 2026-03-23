@@ -1,0 +1,41 @@
+# .gitignore for Django projects
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media / Static
+media/
+# static/ 
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore Pyright type checking stuff
+.pytype/

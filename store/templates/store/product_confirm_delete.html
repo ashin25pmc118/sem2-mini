@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Delete Product — Bakery Mate{% endblock %}
+{% block nav_products %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Delete Product</h2>
+        <p>This action is permanent and cannot be undone.</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:480px;">
+    <div class="alert alert-danger" style="margin-bottom:20px;">
+        ⚠️ Are you sure you want to delete <strong>{{ product.name }}</strong>?
+    </div>
+    <form method="post" style="display:flex;gap:10px;">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">🗑️ Yes, Delete Forever</button>
+        <a class="btn btn-secondary" href="{% url 'product_list' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add Inventory — Bakery Mate{% endblock %}
+{% block nav_inventory %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ action }} Inventory Item</h2>
+        <p>Add a raw material or ingredient to track stock levels.</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:520px;">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="btn btn-primary" type="submit">💾 Save Item</button>
+            <a class="btn btn-secondary" href="{% url 'inventory_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

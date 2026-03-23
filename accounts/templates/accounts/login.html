@@ -1,0 +1,335 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Bakery Mate</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            background: #faf7f2;
+        }
+
+        /* LEFT PANEL - Form */
+        .login-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 48px;
+            background: #faf7f2;
+        }
+
+        .brand-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #c8843a;
+            letter-spacing: 0.05em;
+            margin-bottom: 48px;
+            align-self: flex-start;
+        }
+
+        .login-form-box {
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-form-box h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .login-form-box p.subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 6px;
+            letter-spacing: 0.03em;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e5e1d8;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus {
+            border-color: #c8843a;
+            box-shadow: 0 0 0 3px rgba(200, 132, 58, 0.12);
+        }
+
+        input::placeholder {
+            color: #bbb;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            margin-top: -8px;
+        }
+
+        .form-options label {
+            font-size: 0.82rem;
+            color: #777;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0;
+        }
+
+        .form-options a {
+            font-size: 0.82rem;
+            color: #c8843a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e8902e, #c8843a);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            transition: transform 0.15s, box-shadow 0.15s;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(200, 132, 58, 0.35);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e1d8;
+        }
+
+        .divider span {
+            font-size: 0.78rem;
+            color: #aaa;
+        }
+
+        .register-link {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 24px;
+        }
+
+        .register-link a {
+            color: #c8843a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-messages {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.84rem;
+            color: #c00;
+        }
+
+        /* RIGHT PANEL - Image */
+        .login-right {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .right-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                    rgba(20, 10, 0, 0.85) 0%,
+                    rgba(20, 10, 0, 0.3) 50%,
+                    rgba(20, 10, 0, 0.05) 100%);
+        }
+
+        .right-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            color: white;
+        }
+
+        .brand-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: #e8c06a;
+            text-transform: uppercase;
+            border: 1px solid rgba(232, 192, 106, 0.5);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .right-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            line-height: 1.3;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .right-content p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+            max-width: 340px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.35);
+            transition: width 0.3s;
+        }
+
+        .dot.active {
+            width: 20px;
+            background: #e8c06a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-left">
+        <div class="brand-logo">🎂 Bakery Mate</div>
+
+        <div class="login-form-box">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Sign in to manage your bakery operations.</p>
+
+            {% if form.errors %}
+            <div class="error-messages">
+                Invalid username or password. Please try again.
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input type="text" id="id_username" name="username" placeholder="Enter your username" required
+                        autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <input type="password" id="id_password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox" name="remember_me"> Remember me
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+
+            <div class="register-link">
+                Don't have an account? <a href="{% url 'register' %}">Register your bakery</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-right">
+        <img src="{% static 'accounts/bakery_hero.png' %}" alt="Fresh bakery items">
+        <div class="right-overlay"></div>
+        <div class="right-content">
+            <div class="brand-tag">✦ Fresh Every Day</div>
+            <h2>Manage Your Bakery<br>the Smart Way</h2>
+            <p>Track products, monitor inventory, record sales, and grow your business with Bakery Mate ERP.</p>
+            <div class="dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

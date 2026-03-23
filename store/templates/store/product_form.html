@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Product — Bakery Mate{% endblock %}
+{% block nav_products %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ action }} Product</h2>
+        <p>Set up the details for your bakery product.</p>
+    </div>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    {% if form.errors %}
+    <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background: var(--danger); color: white;">
+        <strong>Hold on! Please correct the errors below.</strong>
+    </div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="display:grid; grid-template-columns: 1fr; gap: 15px;">
+            {% for field in form %}
+            <div style="margin-bottom: 5px;">
+                <label style="font-weight: 600; display: block; margin-bottom: 5px;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: var(--danger); font-size: 0.85rem; margin-top: 5px; font-weight: 600;">
+                    {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+                {% if field.help_text %}
+                <small style="color: #888;">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button class="btn btn-primary" type="submit">💾 Save Product</button>
+            <a class="btn btn-secondary" href="{% url 'product_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        font-family: inherit;
+        background: #fafafa;
+        transition: 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+</style>
+{% endblock %}
