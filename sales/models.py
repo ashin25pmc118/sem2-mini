@@ -115,6 +115,7 @@ class Purchase(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     quantity_added = models.IntegerField()
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    transportation_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     invoice_number = models.CharField(max_length=100, blank=True, null=True)
 
     def save(self, *args, **kwargs):

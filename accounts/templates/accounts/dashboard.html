@@ -28,6 +28,14 @@
         <div class="stat-sub">All-time transactions</div>
     </div>
     <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-label">Monthly P&L</div>
+        <div class="stat-value" style="font-size:1.4rem; color: {% if profit_and_loss >= 0 %}var(--success){% else %}var(--danger){% endif %};">
+            ₹{{ profit_and_loss|floatformat:2|default:"0.00" }}
+        </div>
+        <div class="stat-sub">Revenue - Expenses</div>
+    </div>
+    <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-label">Revenue Month</div>
         <div class="stat-value" style="font-size:1.4rem;">₹{{ month_revenue|floatformat:2|default:"0.00" }}</div>
@@ -93,7 +101,7 @@
     <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <h3 style="font-size:1rem;font-weight:600;">⚠️ Low Stock Alerts</h3>
-            <a href="{% url 'inventory_list' %}" style="font-size:0.8rem;color:var(--brand);text-decoration:none;">View
+            <a href="{% url 'stock_dashboard' %}" style="font-size:0.8rem;color:var(--brand);text-decoration:none;">View
                 all →</a>
         </div>
         {% if low_stock_items %}
@@ -109,8 +117,8 @@
                 {% for item in low_stock_items %}
                 <tr>
                     <td>{{ item.name }}</td>
-                    <td><span class="badge badge-danger">{{ item.quantity }} {{ item.unit }}</span></td>
-                    <td>{{ item.low_stock_alert_level }} {{ item.unit }}</td>
+                    <td><span class="badge badge-danger">{{ item.stock_quantity }} {{ item.get_unit_display }}</span></td>
+                    <td>{{ item.low_stock_alert }} {{ item.get_unit_display }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -40,8 +40,7 @@
                         <strong>{{ p.product.name }}</strong>
                     </div>
                 </td>
-                <td><span class="badge badge-success">+{{ p.quantity|floatformat:"0" }} {{ p.product.get_unit_display
-                        }}</span></td>
+                <td><span class="badge badge-success">+{{ p.quantity|floatformat:"0" }} {{ p.product.get_unit_display }}</span></td>
                 <td>₹{{ p.purchase_price }}/{{ p.product.get_unit_display }}</td>
                 <td><strong style="color:var(--danger);">-₹{{ p.total_cost }}</strong></td>
                 <td>{{ p.supplier_name|default:"—" }}</td>

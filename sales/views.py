@@ -126,10 +126,15 @@ def pos_billing_view(request):
             'packet_selling_price': float(p.packet_selling_price),
         })
 
+    from django.db.models import Max
+    last_sale = Sale.objects.aggregate(max_id=Max('id'))
+    next_invoice_id = (last_sale['max_id'] or 0) + 1
+
     return render(request, 'sales/pos_billing.html', {
         'categories': categories,
         'products_json': json.dumps(products_data),
         'customers': customers,
+        'next_invoice_id': next_invoice_id,
     })
 
 
@@ -137,8 +142,16 @@ def pos_billing_view(request):
 
 @login_required
 def sales_list_view(request):
+    query = request.GET.get('q', '')
     sales = Sale.objects.filter(bakery=request.user.bakery).order_by('-date').select_related('customer', 'cashier')
-    return render(request, 'sales/sales_list.html', {'sales': sales})
+    
+    if query:
+        if query.isdigit():
+            sales = sales.filter(id=int(query))
+        else:
+            sales = sales.filter(customer__name__icontains=query)
+            
+    return render(request, 'sales/sales_list.html', {'sales': sales, 'search_query': query})
 
 @login_required
 def generate_invoice_pdf(request, sale_id):

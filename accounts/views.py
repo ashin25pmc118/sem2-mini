@@ -56,7 +56,17 @@ def dashboard_view(request):
     
     recent_sales = Sale.objects.filter(bakery=bakery).order_by('-date')[:5]
     
-    low_stock_qs = InventoryItem.objects.filter(bakery=bakery, is_active=True, quantity__lte=F('low_stock_alert_level'))
+    # 1. P&L Calculation (Revenue - Purchases - Transport)
+    from sales.models import Purchase
+    from store.models import ProductPurchase
+    raw_materials = Purchase.objects.filter(bakery=bakery, date__year=today.year, date__month=today.month).aggregate(cost=Sum('total_cost'), trans=Sum('transportation_charge'))
+    rm_cost = (raw_materials['cost'] or 0) + (raw_materials['trans'] or 0)
+    
+    product_purchases = ProductPurchase.objects.filter(bakery=bakery, date__year=today.year, date__month=today.month).aggregate(total=Sum('total_cost'))['total'] or 0
+    
+    profit_and_loss = month_revenue - (rm_cost + product_purchases)
+    
+    low_stock_qs = Product.objects.filter(bakery=bakery, is_active=True, stock_quantity__lte=F('low_stock_alert'))
     low_stock_items = low_stock_qs[:5]
     low_stock_count = low_stock_qs.count()
 
@@ -84,6 +94,7 @@ def dashboard_view(request):
         'total_inventory': total_inventory,
         'today_revenue': today_revenue,
         'month_revenue': month_revenue,
+        'profit_and_loss': profit_and_loss,
         'recent_sales': recent_sales,
         'low_stock_items': low_stock_items,
         'low_stock_count': low_stock_count,

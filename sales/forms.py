@@ -35,7 +35,7 @@ class SaleItemForm(forms.ModelForm):
 class PurchaseForm(forms.ModelForm):
     class Meta:
         model = Purchase
-        fields = ['supplier', 'inventory_item', 'quantity_added', 'total_cost', 'invoice_number']
+        fields = ['supplier', 'inventory_item', 'quantity_added', 'total_cost', 'transportation_charge', 'invoice_number']
 
     def __init__(self, *args, bakery=None, **kwargs):
         super().__init__(*args, **kwargs)

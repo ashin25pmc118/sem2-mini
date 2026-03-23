@@ -13,8 +13,16 @@ from django.http import HttpResponse
 
 @login_required
 def product_list(request):
+    query = request.GET.get('q', '')
     products = Product.objects.filter(bakery=request.user.bakery).select_related('category')
-    return render(request, 'store/product_list.html', {'products': products})
+    
+    if query:
+        if query.isdigit():
+            products = products.filter(Q(id=int(query)) | Q(name__icontains=query))
+        else:
+            products = products.filter(name__icontains=query)
+            
+    return render(request, 'store/product_list.html', {'products': products, 'search_query': query})
 
 @login_required
 def product_create(request):
