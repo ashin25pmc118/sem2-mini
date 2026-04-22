@@ -26,6 +26,13 @@
         </div>
         <button type="submit" class="btn btn-primary" style="padding: 7px 16px;">Filter</button>
         <a href="?" class="btn btn-secondary" style="padding: 7px 16px; text-decoration: none;">Clear</a>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('today')" style="padding:5px 10px; font-size:0.85rem;">Today</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('yesterday')" style="padding:5px 10px; font-size:0.85rem;">Yesterday</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('last7')" style="padding:5px 10px; font-size:0.85rem;">Last 7 Days</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('thisMonth')" style="padding:5px 10px; font-size:0.85rem;">This Month</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('allTime')" style="padding:5px 10px; font-size:0.85rem; font-weight:bold;">All Time</button>
+        </div>
     </form>
 </div>
 
@@ -51,9 +58,15 @@
     <div class="stat-card">
         <div class="stat-icon">📈</div>
         <div class="stat-label">Net Profit (True Net)</div>
-        <div class="stat-value" style="color: {% if net_profit >= 0 %}var(--success){% else %}var(--danger){% endif %};">
+        {% if net_profit >= 0 %}
+        <div class="stat-value" style="color:var(--success);">
             ₹{{ net_profit|floatformat:2 }}
         </div>
+        {% else %}
+        <div class="stat-value" style="color:var(--danger);">
+            ₹{{ net_profit|floatformat:2 }}
+        </div>
+        {% endif %}
         <div class="stat-sub">Revenue - (Purchases + Expenses)</div>
     </div>
 </div>
@@ -103,6 +116,32 @@
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Profit and Loss");
         XLSX.writeFile(wb, "Profit_Loss_Report.xlsx");
+    }
+
+    function quickFilter(type) {
+        const today = new Date();
+        let start = new Date();
+        let end = new Date();
+
+        if (type === 'today') {
+            // do nothing, start and end are today
+        } else if (type === 'yesterday') {
+            start.setDate(start.getDate() - 1);
+            end = start;
+        } else if (type === 'last7') {
+            start.setDate(start.getDate() - 6);
+        } else if (type === 'thisMonth') {
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else if (type === 'allTime') {
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+            document.getElementById('start_date').closest('form').submit();
+            return;
+        }
+
+        document.getElementById('start_date').value = start.toISOString().split('T')[0];
+        document.getElementById('end_date').value = end.toISOString().split('T')[0];
+        document.getElementById('start_date').closest('form').submit();
     }
 </script>
 {% endblock %}
