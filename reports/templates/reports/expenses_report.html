@@ -8,6 +8,25 @@
         <h2>💸 Expenses Report</h2>
         <p>Detailed breakdown of all general business expenses.</p>
     </div>
+    <div style="display: flex; gap: 10px;">
+        <button onclick="exportPDF()" class="btn btn-danger">📄 Export to PDF</button>
+        <button onclick="exportExcel()" class="btn btn-success" style="background:var(--success); color:white; border:none;">📊 Export to Excel</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 20px; padding: 16px 20px;">
+    <form method="GET" style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="start_date" style="margin: 0; font-weight: 500;">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}" class="form-control" style="width: auto; padding: 6px 10px;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="end_date" style="margin: 0; font-weight: 500;">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}" class="form-control" style="width: auto; padding: 6px 10px;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="padding: 7px 16px;">Filter</button>
+        <a href="?" class="btn btn-secondary" style="padding: 7px 16px; text-decoration: none;">Clear</a>
+    </form>
 </div>
 
 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
@@ -46,4 +65,37 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    function exportPDF() {
+        var element = document.querySelector('.main-content');
+        var opt = {
+          margin:       0.4,
+          filename:     'Expenses_Report.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+        var btns = element.querySelector('.page-header').lastElementChild;
+        btns.style.display = 'none';
+        html2pdf().set(opt).from(element).save().then(function() {
+            btns.style.display = 'flex';
+        });
+    }
+
+    function exportExcel() {
+        var tables = document.querySelectorAll('.data-table');
+        if (tables.length === 0) return;
+        var wb = XLSX.utils.book_new();
+        tables.forEach(function(table, index) {
+            var ws = XLSX.utils.table_to_sheet(table);
+            XLSX.utils.book_append_sheet(wb, ws, "Expenses " + (index+1));
+        });
+        XLSX.writeFile(wb, "Expenses_Report.xlsx");
+    }
+</script>
 {% endblock %}

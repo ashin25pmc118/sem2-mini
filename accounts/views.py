@@ -35,8 +35,8 @@ def bakery_registration_view(request):
                     login(request, owner)
                     return redirect('dashboard')
             except Exception as e:
-                # Handle error
-                form.add_error(None, f"An error occurred: {e}")
+                # Handle unexpected DB or Integrity errors gracefully
+                form.add_error(None, "An unexpected error occurred while setting up your bakery. Please try again or contact support.")
     else:
         form = BakeryRegistrationForm()
     

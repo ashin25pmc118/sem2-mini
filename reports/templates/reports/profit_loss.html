@@ -8,6 +8,25 @@
         <h2>📉 Profit & Loss Report</h2>
         <p>Overall financial summary for your bakery.</p>
     </div>
+    <div style="display: flex; gap: 10px;">
+        <button onclick="exportPDF()" class="btn btn-danger">📄 Export to PDF</button>
+        <button onclick="exportExcel()" class="btn btn-success" style="background:var(--success); color:white; border:none;">📊 Export to Excel</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 20px; padding: 16px 20px;">
+    <form method="GET" style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="start_date" style="margin: 0; font-weight: 500;">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}" class="form-control" style="width: auto; padding: 6px 10px;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="end_date" style="margin: 0; font-weight: 500;">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}" class="form-control" style="width: auto; padding: 6px 10px;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="padding: 7px 16px;">Filter</button>
+        <a href="?" class="btn btn-secondary" style="padding: 7px 16px; text-decoration: none;">Clear</a>
+    </form>
 </div>
 
 <div class="stats-grid">
@@ -46,4 +65,44 @@
         date filters can be added!
     </p>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    function exportPDF() {
+        var element = document.querySelector('.main-content');
+        var opt = {
+          margin:       0.4,
+          filename:     'Profit_Loss_Report.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+        var btns = element.querySelector('.page-header').lastElementChild;
+        btns.style.display = 'none';
+        html2pdf().set(opt).from(element).save().then(function() {
+            btns.style.display = 'flex';
+        });
+    }
+
+    function exportExcel() {
+        var data = [
+            ["Metric", "Value (₹)", "Description"]
+        ];
+        var cards = document.querySelectorAll('.stat-card');
+        cards.forEach(function(card) {
+            var label = card.querySelector('.stat-label').innerText.trim();
+            var valueStr = card.querySelector('.stat-value').innerText.trim().replace('₹', '').replace(/,/g, '');
+            var sub = card.querySelector('.stat-sub').innerText.trim();
+            data.push([label, parseFloat(valueStr) || 0, sub]);
+        });
+        
+        var ws = XLSX.utils.aoa_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Profit and Loss");
+        XLSX.writeFile(wb, "Profit_Loss_Report.xlsx");
+    }
+</script>
 {% endblock %}
