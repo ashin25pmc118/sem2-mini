@@ -19,7 +19,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('No low stock items found.'))
             return
             
-        subject = 'Low Stock Alert - Bakery Mate'
+        subject = 'Low Stock Alert - ManageNest'
         message = 'The following items are running low on stock:\n\n'
         
         if low_products:

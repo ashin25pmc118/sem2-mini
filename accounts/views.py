@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .forms import BakeryRegistrationForm, StaffCreationForm, StaffEditForm
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from .forms import BakeryRegistrationForm, StaffCreationForm, StaffEditForm, BakeryEditForm, OwnerProfileEditForm
 from .models import User, Bakery
 from django.db import transaction
 from django.db.models import Sum, Count, F
@@ -161,3 +163,43 @@ def staff_delete_view(request, pk):
         return redirect('staff_list')
         
     return render(request, 'accounts/staff_confirm_delete.html', {'staff': staff})
+
+@login_required
+def profile_edit_view(request):
+    user = request.user
+    
+    if not user.is_owner:
+        return redirect('dashboard')
+        
+    bakery = user.bakery
+    
+    if request.method == 'POST':
+        user_form = OwnerProfileEditForm(request.POST, instance=user)
+        bakery_form = BakeryEditForm(request.POST, instance=bakery)
+        password_form = PasswordChangeForm(user, request.POST)
+        
+        # Check if user made changes to password fields
+        password_changed = False
+        if any(request.POST.get(f) for f in ['old_password', 'new_password1', 'new_password2']):
+            password_changed = True
+
+        if user_form.is_valid() and bakery_form.is_valid():
+            if not password_changed or password_form.is_valid():
+                user_form.save()
+                bakery_form.save()
+                if password_changed:
+                    user = password_form.save()
+                    update_session_auth_hash(request, user) # keeps user logged in
+                messages.success(request, "Shop Settings saved successfully!")
+                return redirect('profile_edit')
+    else:
+        user_form = OwnerProfileEditForm(instance=user)
+        bakery_form = BakeryEditForm(instance=bakery)
+        password_form = PasswordChangeForm(user)
+        
+    context = {
+        'user_form': user_form,
+        'bakery_form': bakery_form,
+        'password_form': password_form,
+    }
+    return render(request, 'accounts/profile_edit.html', context)

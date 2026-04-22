@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Bakery Mate{% endblock %}</title>
+    <title>{% block title %}ManageNest{% endblock %}</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet">
@@ -551,14 +551,18 @@
 
     <!-- TOP BAR -->
     <div class="topbar">
-        <a class="topbar-logo" href="{% url 'dashboard' %}">🎂 Bakery Mate</a>
+        <a class="topbar-logo" href="{% url 'dashboard' %}">🎂 ManageNest</a>
         <div class="topbar-sep"></div>
         {% if user.is_authenticated %}
         <div class="topbar-bakery">
             <strong>{{ user.bakery.name }}</strong>
         </div>
         <div class="topbar-user">
+            {% if user.is_owner %}
+            <a href="{% url 'profile_edit' %}" class="user-badge" style="text-decoration:none;">👤 {{ user.username }} &bull; {{ user.role|default:"Owner" }}</a>
+            {% else %}
             <span class="user-badge">👤 {{ user.username }} &bull; {{ user.role|default:"Owner" }}</span>
+            {% endif %}
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
                 <button class="logout-btn" type="submit">Logout</button>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Expenses Report — Bakery Mate{% endblock %}
+{% block title %}Expenses Report — ManageNest{% endblock %}
 {% block nav_report_expenses %}active{% endblock %}
 
 {% block content %}
@@ -26,6 +26,13 @@
         </div>
         <button type="submit" class="btn btn-primary" style="padding: 7px 16px;">Filter</button>
         <a href="?" class="btn btn-secondary" style="padding: 7px 16px; text-decoration: none;">Clear</a>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('today')" style="padding:5px 10px; font-size:0.85rem;">Today</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('yesterday')" style="padding:5px 10px; font-size:0.85rem;">Yesterday</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('last7')" style="padding:5px 10px; font-size:0.85rem;">Last 7 Days</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('thisMonth')" style="padding:5px 10px; font-size:0.85rem;">This Month</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('allTime')" style="padding:5px 10px; font-size:0.85rem; font-weight:bold;">All Time</button>
+        </div>
     </form>
 </div>
 
@@ -96,6 +103,32 @@
             XLSX.utils.book_append_sheet(wb, ws, "Expenses " + (index+1));
         });
         XLSX.writeFile(wb, "Expenses_Report.xlsx");
+    }
+
+    function quickFilter(type) {
+        const today = new Date();
+        let start = new Date();
+        let end = new Date();
+
+        if (type === 'today') {
+            // do nothing, start and end are today
+        } else if (type === 'yesterday') {
+            start.setDate(start.getDate() - 1);
+            end = start;
+        } else if (type === 'last7') {
+            start.setDate(start.getDate() - 6);
+        } else if (type === 'thisMonth') {
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else if (type === 'allTime') {
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+            document.getElementById('start_date').closest('form').submit();
+            return;
+        }
+
+        document.getElementById('start_date').value = start.toISOString().split('T')[0];
+        document.getElementById('end_date').value = end.toISOString().split('T')[0];
+        document.getElementById('start_date').closest('form').submit();
     }
 </script>
 {% endblock %}

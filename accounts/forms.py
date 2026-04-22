@@ -88,3 +88,36 @@ class StaffEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         roles = [('Manager', 'Manager'), ('Cashier', 'Cashier'), ('Inventory Clerk', 'Inventory Clerk')]
         self.fields['role'].choices = roles
+
+class BakeryEditForm(forms.ModelForm):
+    class Meta:
+        model = Bakery
+        fields = ['name', 'address', 'phone']
+        labels = {
+            'name': 'Bakery Name',
+            'address': 'Bakery Address',
+            'phone': 'Contact Phone',
+        }
+        
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone and not re.match(r'^[\d\+\-\(\) ]{8,20}$', phone):
+            raise forms.ValidationError("Please enter a valid phone number (e.g., +1234567890).")
+        return phone
+
+class OwnerProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("This email is already in use by another account.")
+        return email

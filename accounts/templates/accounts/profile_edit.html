@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Shop Settings — ManageNest{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>⚙️ Shop Settings</h2>
+        <p>Update your bakery details and administrator profile.</p>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); align-items: start;">
+    <!-- Bakery Details Form -->
+    <div class="card" style="padding: 24px;">
+        <h3 style="font-size:1.1rem; font-family:'Playfair Display',serif; margin-bottom: 16px; color:var(--brand);">🏪 Bakery Information</h3>
+        <hr style="border: 0; height: 1px; background: var(--border); margin-bottom: 20px;">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in bakery_form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field.help_text }}
+                {% if field.name == 'address' %}
+                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" rows="3">{{ field.value|default:'' }}</textarea>
+                {% else %}
+                    <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}" class="form-control">
+                {% endif %}
+            </div>
+            {% endfor %}
+    </div>
+
+    <!-- Admin Details Form -->
+    <div class="card" style="padding: 24px;">
+        <h3 style="font-size:1.1rem; font-family:'Playfair Display',serif; margin-bottom: 16px; color:var(--brand);">👤 Admin Profile</h3>
+        <hr style="border: 0; height: 1px; background: var(--border); margin-bottom: 20px;">
+            {% for field in user_form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field.help_text }}
+                <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}" class="form-control">
+            </div>
+            {% endfor %}
+    </div>
+
+    <!-- Password Change Form -->
+    <div class="card" style="padding: 24px;">
+        <h3 style="font-size:1.1rem; font-family:'Playfair Display',serif; margin-bottom: 16px; color:var(--brand);">🔒 Change Password</h3>
+        <hr style="border: 0; height: 1px; background: var(--border); margin-bottom: 20px;">
+            <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Leave these fields blank if you do not wish to change your password.</p>
+            {% for field in password_form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field.help_text }}
+                <input type="password" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control">
+            </div>
+            {% endfor %}
+    </div>
+</div>
+
+<div style="display:flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="padding: 10px 24px; text-decoration: none;">Cancel</a>
+    <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 0.95rem;">Save Changes</button>
+</div>
+</form>
+
+{% endblock %}

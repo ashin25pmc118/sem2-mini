@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Sales Report — Bakery Mate{% endblock %}
+{% block title %}Sales Report — ManageNest{% endblock %}
 {% block nav_report_sales %}active{% endblock %}
 
 {% block content %}
@@ -26,6 +26,13 @@
         </div>
         <button type="submit" class="btn btn-primary" style="padding: 7px 16px;">Filter</button>
         <a href="?" class="btn btn-secondary" style="padding: 7px 16px; text-decoration: none;">Clear</a>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('today')" style="padding:5px 10px; font-size:0.85rem;">Today</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('yesterday')" style="padding:5px 10px; font-size:0.85rem;">Yesterday</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('last7')" style="padding:5px 10px; font-size:0.85rem;">Last 7 Days</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('thisMonth')" style="padding:5px 10px; font-size:0.85rem;">This Month</button>
+            <button type="button" class="btn btn-secondary" onclick="quickFilter('allTime')" style="padding:5px 10px; font-size:0.85rem; font-weight:bold;">All Time</button>
+        </div>
     </form>
 </div>
 
@@ -37,7 +44,34 @@
     </div>
 </div>
 
+</div>
+
+{% if itemized_sales %}
+<div class="card" style="margin-bottom: 20px;">
+    <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;">🛒 Itemised Sales Summary</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in itemized_sales %}
+            <tr>
+                <td><strong>{{ item.product__name }}</strong></td>
+                <td>{{ item.total_qty }}</td>
+                <td><strong>₹{{ item.total_rev|floatformat:2 }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
 <div class="card">
+    <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;">🧾 Detailed Invoice List</h3>
     <table class="data-table">
         <thead>
             <tr>
@@ -97,6 +131,32 @@
             XLSX.utils.book_append_sheet(wb, ws, "Sheet " + (index+1));
         });
         XLSX.writeFile(wb, "Sales_Report.xlsx");
+    }
+
+    function quickFilter(type) {
+        const today = new Date();
+        let start = new Date();
+        let end = new Date();
+
+        if (type === 'today') {
+            // do nothing, start and end are today
+        } else if (type === 'yesterday') {
+            start.setDate(start.getDate() - 1);
+            end = start;
+        } else if (type === 'last7') {
+            start.setDate(start.getDate() - 6);
+        } else if (type === 'thisMonth') {
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else if (type === 'allTime') {
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+            document.getElementById('start_date').closest('form').submit();
+            return;
+        }
+
+        document.getElementById('start_date').value = start.toISOString().split('T')[0];
+        document.getElementById('end_date').value = end.toISOString().split('T')[0];
+        document.getElementById('start_date').closest('form').submit();
     }
 </script>
 {% endblock %}

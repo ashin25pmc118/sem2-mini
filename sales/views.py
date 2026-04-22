@@ -162,7 +162,7 @@ def generate_invoice_pdf(request, sale_id):
     
     p = canvas.Canvas(response, pagesize=letter)
     p.setFont("Helvetica-Bold", 16)
-    p.drawString(50, 750, f"Bakery Mate - Invoice #{sale.id}")
+    p.drawString(50, 750, f"ManageNest - Invoice #{sale.id}")
     p.setFont("Helvetica", 12)
     p.drawString(50, 730, f"Bakery: {sale.bakery.name}")
     p.drawString(50, 710, f"Date: {sale.date.strftime('%Y-%m-%d %H:%M')}")
@@ -222,7 +222,7 @@ def generate_invoice_pdf(request, sale_id):
     
     p = canvas.Canvas(response, pagesize=letter)
     p.setFont("Helvetica-Bold", 16)
-    p.drawString(50, 750, f"Bakery Mate - Invoice #{sale.id}")
+    p.drawString(50, 750, f"ManageNest - Invoice #{sale.id}")
     p.setFont("Helvetica", 12)
     p.drawString(50, 730, f"Bakery: {sale.bakery.name}")
     p.drawString(50, 710, f"Date: {sale.date.strftime('%Y-%m-%d %H:%M')}")
